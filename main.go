@@ -6,11 +6,12 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 func main() {
 	// artASCII
-	fmt.Println("MemeGo v0.1\n\n")
+	fmt.Println("\n\nMemeGo v0.1\n\n")
 
 	var filepath string
 
@@ -19,9 +20,9 @@ func main() {
 
 	err := copyImage(filepath, "imgs")
 	if err != nil {
-		fmt.Println("Error copying image:", err)
+		fmt.Println("\nError copying image:", err)
 	} else {
-		fmt.Println("Image copied successfully.")
+		fmt.Println("\nImage copied successfully.")
 	}
 
 	if err != nil {
@@ -29,16 +30,21 @@ func main() {
 		return
 	}
 
-	var image image.Image
+	var nameImage string
 
-	fmt.Println("2. Add Text")
+	sp := strings.Split(filepath, "/")
+	nameImage = sp[len(sp)-1]
+
+	image, err := loadImage("imgs/" + nameImage)
+
+	fmt.Println("\n2. Add Text")
 	image, err = addTextToImage(image, "Hello, World!")
 
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println("3. Save Image")
+	fmt.Println("\n3. Save Image")
 	err = saveImage(image, "output.jpg")
 
 	if err != nil {
