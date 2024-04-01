@@ -3,6 +3,9 @@ package main
 import (
 	"fmt"
 	"image"
+	"image/color"
+	"image/draw"
+	"image/jpeg"
 	"io"
 	"os"
 	"path/filepath"
@@ -12,6 +15,11 @@ import (
 func main() {
 	// artASCII
 	fmt.Println("\n\nMemeGo v0.1\n\n")
+
+	// - meme com uma imagem e um texto
+	// - meme com uma imagem e dois textos
+	// - meme com duas imagens e um texto
+	// - meme com duas imagens e dois textos
 
 	var filepath string
 
@@ -35,41 +43,50 @@ func main() {
 	sp := strings.Split(filepath, "/")
 	nameImage = sp[len(sp)-1]
 
-	image, err := loadImage("imgs/" + nameImage)
+	img, err := loadImage("imgs/" + nameImage)
+
+	var textImage string
 
 	fmt.Println("\n2. Add Text")
-	image, err = addTextToImage(image, "Hello, World!")
+	fmt.Scanln(&textImage)
 
+	// tipo da fonte
+	fmt.Println("\n3. Font Type")
+	fmt.Println("1. Arial")
+	fmt.Println("2. Comic Sans")
+	fmt.Println("3. Courier")
+
+	var fontType int
+	fmt.Scanln(&fontType)
+
+	img, err = addTextToImage(img, textImage)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println("\n3. Save Image")
-	err = saveImage(image, "output.jpg")
 
+	fmt.Println("\n4. Saving Image...")
+	err = saveImage(img, "output.jpg")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
+
 	fmt.Println("Done!")
-
 }
 
 func copyImage(srcPath, destDir string) error {
-	// Abre o arquivo de origem
 	srcFile, err := os.Open(srcPath)
 	if err != nil {
 		return err
 	}
 	defer srcFile.Close()
 
-	// Cria o diretório de destino, se necessário
 	err = os.MkdirAll(destDir, os.ModePerm)
 	if err != nil {
 		return err
 	}
 
-	// Cria o arquivo de destino
 	destPath := filepath.Join(destDir, filepath.Base(srcPath))
 	destFile, err := os.Create(destPath)
 	if err != nil {
@@ -77,22 +94,49 @@ func copyImage(srcPath, destDir string) error {
 	}
 	defer destFile.Close()
 
-	// Copia o conteúdo do arquivo de origem para o arquivo de destino
 	_, err = io.Copy(destFile, srcFile)
 	return err
 }
 
 func loadImage(filename string) (image.Image, error) {
+	file, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
 
-	return nil, nil
+	img, _, err := image.Decode(file)
+	if err != nil {
+		return nil, err
+	}
+
+	return img, nil
 }
 
 func addTextToImage(img image.Image, text string) (image.Image, error) {
+	// Carregue uma fonte (neste exemplo, usamos uma fonte padrão do sistema)
+	face := truetype.NewFace(fonts, &truetype.Options{Size: 24})
 
-	return nil, nil
+	// Crie uma nova imagem com base na imagem original
+	newImg := image.NewRGBA(img.Bounds())
+	draw.Draw(newImg, newImg.Bounds(), img, image.Point{}, draw.Src)
+
+	// Defina as cores do texto e do contorno
+	textColor := color.RGBA{255, 255, 255, 255} // Branco
+	outlineColor := color.RGBA{0, 0, 0, 255}    // Preto
+
+	// Adicione o texto superior
+	addLabel(newImg, face, text, 10, 30, textColor, outlineColor)
+
+	return newImg, nil
 }
 
 func saveImage(img image.Image, filename string) error {
+	file, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
 
-	return nil
+	return jpeg.Encode(file, img, &jpeg.Options{Quality: 100})
 }
