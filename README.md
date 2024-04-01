@@ -1,1 +1,1 @@
-# MemeGo
+# LaughCLI
