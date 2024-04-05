@@ -7,9 +7,14 @@ import (
 	"image/draw"
 	"image/jpeg"
 	"io"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"golang.org/x/image/font"
+	"golang.org/x/image/font/opentype"
+	"golang.org/x/image/math/fixed"
 )
 
 func main() {
@@ -113,20 +118,56 @@ func loadImage(filename string) (image.Image, error) {
 	return img, nil
 }
 
-func addTextToImage(img image.Image, text string) (image.Image, error) {
-	// Carregue uma fonte (neste exemplo, usamos uma fonte padrão do sistema)
-	face := truetype.NewFace(fonts, &truetype.Options{Size: 24})
+func loadFont(fontPath string) (font.Face, error) {
+	fontBytes, err := ioutil.ReadFile(fontPath)
+	if err != nil {
+		return nil, err
+	}
+	f, err := opentype.Parse(fontBytes)
+	if err != nil {
+		return nil, err
+	}
+	face, err := opentype.NewFace(f, &opentype.FaceOptions{
+		Size:    24,
+		DPI:     72,
+		Hinting: font.HintingFull,
+	})
+	return face, err
+}
 
-	// Crie uma nova imagem com base na imagem original
+func addLabel(img *image.RGBA, face font.Face, label string, x, y int, textColor color.Color) {
+	point := fixed.Point26_6{X: fixed.Int26_6(x * 64), Y: fixed.Int26_6(y * 64)}
+
+	drawer := &font.Drawer{
+		Dst:  img,
+		Src:  image.NewUniform(textColor),
+		Face: face,
+		Dot:  point,
+	}
+	drawer.DrawString(label)
+}
+
+func addTextToImage(img image.Image, text string) (image.Image, error) {
+	face, err := loadFont("fonts/arial.ttf")
+	if err != nil {
+		return nil, err
+	}
+
+	// Crie uma nova imagem com base na imagem original com uma barra branca no topo
 	newImg := image.NewRGBA(img.Bounds())
 	draw.Draw(newImg, newImg.Bounds(), img, image.Point{}, draw.Src)
 
-	// Defina as cores do texto e do contorno
-	textColor := color.RGBA{255, 255, 255, 255} // Branco
-	outlineColor := color.RGBA{0, 0, 0, 255}    // Preto
+	// Defina a cor da barra branca
+	white := color.RGBA{255, 255, 255, 255}
 
-	// Adicione o texto superior
-	addLabel(newImg, face, text, 10, 30, textColor, outlineColor)
+	// Adicione a barra branca à imagem
+	draw.Draw(newImg, image.Rect(0, 0, newImg.Bounds().Dx(), 50), &image.Uniform{white}, image.Point{}, draw.Src)
+
+	// Defina as cores do texto
+	textColor := color.RGBA{0, 0, 0, 255}
+
+	// Adicione o texto à imagem
+	addLabel(newImg, face, text, 10, 30, textColor)
 
 	return newImg, nil
 }
