@@ -57,21 +57,22 @@ func main() {
 
 	// tipo da fonte
 	fmt.Println("\n3. Font Type")
-	fmt.Println("1. Arial")
-	fmt.Println("2. Comic Sans")
-	fmt.Println("3. Courier")
+
+	fmt.Println("Arial (1)")
+	fmt.Println("Comic Sans (2)")
+	fmt.Println("Courier New (3)")
 
 	var fontType int
 	fmt.Scanln(&fontType)
 
-	img, err = addTextToImage(img, textImage)
+	img, err = addTextToImage(img, textImage, fontType)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
 	fmt.Println("\n4. Saving Image...")
-	err = saveImage(img, "output.jpg")
+	err = saveImage(img, "results/output.jpg")
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -144,29 +145,46 @@ func addLabel(img *image.RGBA, face font.Face, label string, x, y int, textColor
 		Face: face,
 		Dot:  point,
 	}
+
 	drawer.DrawString(label)
 }
 
-func addTextToImage(img image.Image, text string) (image.Image, error) {
-	face, err := loadFont("fonts/arial.ttf")
-	if err != nil {
-		return nil, err
+func addTextToImage(img image.Image, text string, fontfamily int) (image.Image, error) {
+
+	var face font.Face
+	var err error
+
+	switch fontfamily {
+	case 1:
+		face, err = loadFont("fonts/arial.ttf")
+		if err != nil {
+			return nil, fmt.Errorf("failed to load Arial font: %v", err)
+		}
+	case 2:
+		face, err = loadFont("fonts/ComicNeue-Regular.ttf")
+		if err != nil {
+			return nil, fmt.Errorf("failed to load Comic Sans font: %v", err)
+		}
+	case 3:
+		face, err = loadFont("fonts/CourierPrime-Regular.ttf")
+		if err != nil {
+			return nil, fmt.Errorf("failed to load Courier New font: %v", err)
+		}
+	}
+
+	if face == nil {
+		return nil, fmt.Errorf("failed to load font")
 	}
 
 	// Crie uma nova imagem com base na imagem original com uma barra branca no topo
+
 	newImg := image.NewRGBA(img.Bounds())
 	draw.Draw(newImg, newImg.Bounds(), img, image.Point{}, draw.Src)
 
-	// Defina a cor da barra branca
 	white := color.RGBA{255, 255, 255, 255}
-
-	// Adicione a barra branca à imagem
 	draw.Draw(newImg, image.Rect(0, 0, newImg.Bounds().Dx(), 50), &image.Uniform{white}, image.Point{}, draw.Src)
 
-	// Defina as cores do texto
 	textColor := color.RGBA{0, 0, 0, 255}
-
-	// Adicione o texto à imagem
 	addLabel(newImg, face, text, 10, 30, textColor)
 
 	return newImg, nil
