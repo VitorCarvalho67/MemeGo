@@ -9,7 +9,7 @@
   <img src="https://i.imgur.com/HsrhN5S.png" style="width: 600px;" alt="Imagem logo"/>
 </p>
 
-# OBS-ChatStyle
+# MemeGo
 
 [![GitHub license](https://img.shields.io/github/license/vitorcarvalho67/MemeGo)](vitorcarvalho67/MemeGo/blob/master/LICENSE)
 ![GitHub stars](https://img.shields.io/github/stars/vitorcarvalho67/MemeGo)
