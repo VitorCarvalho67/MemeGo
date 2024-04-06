@@ -6,7 +6,7 @@
 </h4>
 
 <p align="center">
-  <img src="https://i.imgur.com/HsrhN5S.png" style="width: 600px;" alt="Imagem logo"/>
+  <img src="https://i.imgur.com/bQfxNUL.png" style="width: 600px;" alt="Imagem logo"/>
 </p>
 
 # MemeGo
