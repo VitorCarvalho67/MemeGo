@@ -20,19 +20,21 @@ import (
 func main() {
 	// artASCII
 
-	color := "\033[38;5;52m"
+	color := "\033[38;5;50m"
+	// color := "\033[38;5;52m"
+
 	reset := "\033[0m"
 
 	fmt.Println(color + "\n\n" + `
-	__       __                                     ______            
+	 __       __                                     ______            
 	|  \     /  \                                   /      \           
-	| $$\   /  $$  ______   ______ ____    ______  |  $$$$$$\  ______  
-	| $$$\ /  $$$ /      \ |      \    \  /      \ | $$ __\$$ /      \ 
-	| $$$$\  $$$$|  $$$$$$\| $$$$$$\$$$$\|  $$$$$$\| $$|    \|  $$$$$$\
-	| $$\$$ $$ $$| $$    $$| $$ | $$ | $$| $$    $$| $$ \$$$$| $$  | $$
-	| $$ \$$$| $$| $$$$$$$$| $$ | $$ | $$| $$$$$$$$| $$__| $$| $$__/ $$
-	| $$  \$ | $$ \$$     \| $$ | $$ | $$ \$$     \ \$$    $$ \$$    $$
-	 \$$      \$$  \$$$$$$$ \$$  \$$  \$$  \$$$$$$$  \$$$$$$   \$$$$$$
+	| ██\   /  ██  ______   ______ ____    ______  |  ██████\  ______  
+	| ███\ /  ███ /      \ |      \    \  /      \ | ██ __\██ /      \ 
+	| ████\  ████|  ██████\| ██████\████\|  ██████\| ██|    \|  ██████\
+	| ██\██ ██ ██| ██    ██| ██ | ██ | ██| ██    ██| ██ \████| ██  | ██
+	| ██ \███| ██| ████████| ██ | ██ | ██| ████████| ██__| ██| ██__/ ██
+	| ██  \█ | ██ \██     \| ██ | ██ | ██ \██     \ \██    ██ \██    ██
+	 \██      \██  \███████ \██  \██  \██  \███████  \██████   \██████
 	` + "\n\n" + reset)
 
 	// - meme com uma imagem e um texto
@@ -42,7 +44,7 @@ func main() {
 
 	var filepath string
 
-	fmt.Println("1. Load Image (file path jpg, png)")
+	fmt.Println(color + "1. " + reset + "Load Image (file path jpg, png)")
 	fmt.Scanln(&filepath)
 
 	err := copyImage(filepath, "imgs")
@@ -66,11 +68,11 @@ func main() {
 
 	var textImage string
 
-	fmt.Println("\n2. Add Text")
+	fmt.Println(color + "\n2. " + reset + "Add Text")
 	fmt.Scanln(&textImage)
 
 	// tipo da fonte
-	fmt.Println("\n3. Font Type")
+	fmt.Println(color + "\n3. " + reset + "Font Type")
 
 	fmt.Println("Arial (1)")
 	fmt.Println("Comic Sans (2)")
@@ -85,7 +87,7 @@ func main() {
 		return
 	}
 
-	fmt.Println("\n4. Saving Image...")
+	fmt.Println(color + "\n4. " + reset + "Saving Image...")
 	err = saveImage(img, "results/output.jpg")
 	if err != nil {
 		fmt.Println(err)
@@ -196,7 +198,7 @@ func addTextToImage(img image.Image, text string, fontfamily int) (image.Image, 
 	draw.Draw(newImg, newImg.Bounds(), img, image.Point{}, draw.Src)
 
 	white := color.RGBA{255, 255, 255, 255}
-	draw.Draw(newImg, image.Rect(0, 0, newImg.Bounds().Dx(), 50), &image.Uniform{white}, image.Point{}, draw.Src)
+	draw.Draw(newImg, image.Rect(0, 0, newImg.Bounds().Dx(), 200), &image.Uniform{white}, image.Point{}, draw.Src)
 
 	textColor := color.RGBA{0, 0, 0, 255}
 	addLabel(newImg, face, text, 10, 30, textColor)
