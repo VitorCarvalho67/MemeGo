@@ -1,8 +1,7 @@
 <h4 align="center">
     <p>
         <b>English</b> |
-        <a href="#">Рortuguês</a>
-        
+        <a href="https://github.com/VitorCarvalho67/MemeGo/blob/main/README_pt-BR.md">Рortuguês</a>
     </p>
 </h4>
 
